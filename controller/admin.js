@@ -20,7 +20,15 @@ exports.signUp = (req, res) => {
                 console.log(err);
                 return res.json({message: 'unable to create new user'})
             }
-            User.create({name, email, telephone, password: hash})
+           // User.create({name, email, telephone, password: hash})
+           const user= new User({
+            name: name,
+            email:email,
+            telephone:telephone,
+            password: hash,
+            isPremiumUser: false
+        })
+        user.save()
                 .then(() => {
                 res.status(201).json({success: true, message: 'sign up successful'})
                 })
@@ -37,7 +45,8 @@ exports.login = async(req, res) => {
     try{
         const {email, password} = req.body;
         // console.log(req.body)
-        const user= await User.findAll({where: {email}});
+      //  const user= await User.findAll({where: {email}});
+      const user= await User.find({email:email});
         if (user.length > 0) {
             bcrypt.compare(password, user[0].password, function(err, response) {
                 if (err) {
@@ -63,105 +72,13 @@ exports.login = async(req, res) => {
     }
 }
 
-//exports.forgotPassword = async (req, res) => {
-  //  try {
-    //    const {email} = req.body;
-     //   console.log(email);
-       // const user = await User.findOne({ where: { email } });
-       // if (user) {
-         //   const id = uuid.v4();
-          //  user.createForgotpassword({ id, active: true })
-            //    .catch(err => {
-              //      throw new Error(err)
-               // })
-
-            //sgMail.setApiKey(process.env.SENGRID_API_KEY)
-
-            //const msg = {
-              //  to: email,
-               // from: 'abc@gmail.com',
-               // subject: 'sending with sendgrid',
-               // text: 'password reset mail',
-               // html: `<a href='http://localhost:3000/reset-password/${id}'>Reset Password</a>`
-           // }
-
-           // sgMail.send(msg).then(response => {
-             //   return res.status(response[0].statusCode).json({ message: 'link to password reset sent to mail', success: true })
-            //}).catch(err => {
-              //  throw new Error(err);
-           // })
-        //} else {
-          //  throw new Error('user does not exist');
-       // }
-    //} catch (err) {
-      //  console.log(err);
-       // res.json({ message: err, success: false })
-       //}
-
-//exports.resetPassword = async(req, res) => {
-  //  try{
-    //    const {id} = req.params;
-     //   const forgotpasswordreq= await ForgotPassword.findOne({where: {id}})
-      //  if (forgotpasswordreq) {
-       //     forgotpasswordreq.update({active: false});
-        //    res.status(200).send(`<html>
-         //   <script>
-          //  function formsubmitted(e) {
-           //     e.preventDefault();
-            //    console.log('called')
-            //}
-           // </script>
-            //<form action='/update-password/${id}' method='get'>
-            //<label for='newPass'>Enter New Password</label>
-            //<input name='newPass' type='password' required></input>
-            //<button>Reset Password</button>
-           // </form>
-           // </html>`)
-           // res.end()
-       // }
-    //}catch(err){
-      //  console.log(err);
-   // }
-//}
-
-//exports.updatepassword = async(req, res) => {
-  //  try{
-    //    const {newPass} = req.query;
-        // console.log(newPass);
-      //  const {resetPassId} = req.params;
-        // console.log(resetPassId);
-        //const resetpasswordreq= await ForgotPassword.findOne({where: {id: resetPassId}});
-        //const user= await User.findOne({where: {id: resetpasswordreq.userId}});
-        //if (user) {
-          ///  const saltRounds = 10;
-           // bcrypt.genSalt(saltRounds, function(err, salt) {
-             //   if (err) {
-               //     console.log(err);
-                //}
-                //bcrypt.hash(newPass, salt, function(err, hash) {
-                 //   if (err) {
-                   //     console.log(err);
-                    //}
-                    //user.update({password: hash}).then(() => {
-                      //  res.status(201).json({message: 'Successfully updated the new password'})
-                   // })
-                //})
-           // })
-        //} else {
-          //  return res.status(404).json({error: 'No user exists', success: false})
-       // }
-    //} catch(error) {
-      //  console.log(error);
-      //  res.status(400).json({error: 'No user exists', success: false})
-   // }
-//}
-
 
 exports.forgotPassword = async (req, res) => {
     try {
         //let requestId;
         const { email } =  req.body;
-        const user = await User.findOne({where : { email }});
+      //  const user = await User.findOne({where : { email }});
+      const user = await User.findOne({ email: email });
         if(user){
             const id = uuid.v4();
           // requestId=uuid.v4();

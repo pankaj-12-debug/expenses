@@ -2,7 +2,8 @@
   //  return req.user.getExpenses();
 //}
 const getExpenses=(req,where)=>{
-    return req.user.getExpenses(where);
+    //return req.user.getExpenses(where);
+    return Expense.find({userId: req.user._id});
 }
 module.exports={
     getExpenses
